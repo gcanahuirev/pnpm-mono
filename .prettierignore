@@ -8,3 +8,9 @@ tmp
 package-lock.json
 ./pnpm-lock.yaml
 pnpm-workspace.yaml
+
+# Ignore files in the root of the project
+/apps/*/dist/**
+/apps/*/coverage/**
+/packages/*/build/**
+/packages/*/coverage/**
