@@ -1,0 +1,10 @@
+# Add files here to ignore them from prettier formatting
+tmp
+/dist
+/coverage
+./README.md
+/node_modules/**
+./package.json
+package-lock.json
+./pnpm-lock.yaml
+pnpm-workspace.yaml
