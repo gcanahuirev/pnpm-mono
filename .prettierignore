@@ -3,7 +3,7 @@ tmp
 /dist
 /coverage
 ./README.md
-/node_modules/**
+node_modules/
 ./package.json
 package-lock.json
 ./pnpm-lock.yaml
