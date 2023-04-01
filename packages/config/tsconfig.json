@@ -1,0 +1,23 @@
+{
+  "exclude": ["node_modules", "tmp", "build"],
+  "compileOnSave": false,
+  "compilerOptions": {
+    "strict": true,
+    "rootDir": "./src",
+    "outDir": "./build",
+    "target": "ES2017",
+    "lib": ["ES2017"],
+    "module": "CommonJS",
+    "typeRoots": ["node_modules/@types"],
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "declaration": true,
+    "importHelpers": true,
+    "noUnusedLocals": true,
+    "removeComments": true,
+    "noImplicitReturns": true,
+    "noUnusedParameters": true,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+  }
+}
