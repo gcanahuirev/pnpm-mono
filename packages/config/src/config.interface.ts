@@ -1,23 +1,30 @@
 export interface ConfigDatabase {
-  url: string;
-}
-
-export interface ConfigSwagger {
+  host: string;
+  port: number;
   username: string;
   password: string;
+  database: string;
 }
 
 export interface AuthConfig {
   expiresIn: number;
-  access_token_secret: string;
-  refresh_token_secret: string;
+  accessTokenSecret: string;
+  refreshTokenSecret: string;
+}
+
+export interface S3ClientConfig {
+  accessKey: string;
+  secretAccessKey: string;
+  region: string;
+  bucket: string;
 }
 
 export interface ConfigData {
   env: string;
   port: number;
-  db: ConfigDatabase;
-  swagger: ConfigSwagger;
   logLevel: string;
   auth: AuthConfig;
+  s3: S3ClientConfig;
+  db: ConfigDatabase;
 }
+

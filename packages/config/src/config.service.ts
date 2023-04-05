@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { DEFAULT_CONFIG } from './config.default';
-import { ConfigData, ConfigDatabase, ConfigSwagger } from './config.interface';
+import { ConfigData, ConfigDatabase } from './config.interface';
 
 @Injectable()
 export class ConfigService {
@@ -17,32 +17,33 @@ export class ConfigService {
   private parseConfigFromEnv(env: NodeJS.ProcessEnv): ConfigData {
     return {
       env: env.NODE_ENV || DEFAULT_CONFIG.env,
-      port: parseInt(env?.PORT ?? '3000', 10),
-      db: this.parseDBConfig(env, DEFAULT_CONFIG.db),
-      swagger: this.parseSwaggerConfig(env, DEFAULT_CONFIG.swagger),
-      logLevel: env?.LOG_LEVEL ?? DEFAULT_CONFIG.logLevel,
+      port: parseInt(env.NODE_PORT!, 10) || DEFAULT_CONFIG.port,
+      logLevel: env.NODE_LOG_LEVEL || DEFAULT_CONFIG.logLevel,
       auth: {
-        expiresIn: Number(env.TOKEN_EXPIRY),
-        access_token_secret: env?.JWT_ACCESS_TOKEN_SECRET ?? '',
-        refresh_token_secret: env?.JWT_REFRESH_TOKEN_SECRET ?? '',
+        expiresIn: Number(env.JWT_TOKEN_EXPIRY),
+        accessTokenSecret: env.JWT_ACCESS_TOKEN ?? '',
+        refreshTokenSecret: env.JWT_REFRESH_TOKEN ?? '',
       },
+      s3: {
+        accessKey: env?.AWS_S3_ACCESS_KEY ?? '',
+        secretAccessKey: env?.AWS_S3_SECRET_ACCESS_KEY ?? '',
+        region: env?.AWS_S3_REGION ?? '',
+        bucket: env?.AWS_S3_BUCKET ?? '',
+      },
+      db: this.parseDBConfig(env, DEFAULT_CONFIG.db),
     };
   }
+
   private parseDBConfig(
     env: NodeJS.ProcessEnv,
     defaultConfig: Readonly<ConfigDatabase>,
-  ) {
+  ): ConfigDatabase {
     return {
-      url: env.DATABASE_URL || defaultConfig.url,
-    };
-  }
-  private parseSwaggerConfig(
-    env: NodeJS.ProcessEnv,
-    defaultConfig: Readonly<ConfigSwagger>,
-  ) {
-    return {
-      username: env.SWAGGER_USERNAME || defaultConfig.username,
-      password: env.SWAGGER_PASSWORD || defaultConfig.password,
+      host: env.DATABASE_HOST || defaultConfig.host,
+      port: parseInt(env.DATABASE_PORT!, 10) || defaultConfig.port,
+      username: env.DATABASE_USERNAME || defaultConfig.username,
+      password: env.DATABASE_PASSWORD || defaultConfig.password,
+      database: env.DATABASE_NAME || defaultConfig.database,
     };
   }
 
