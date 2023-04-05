@@ -27,12 +27,18 @@ export class DBModule {
   ): TypeOrmModuleOptions {
     return {
       type: 'postgres',
-      url: dbData.url,
+      host: dbData.host,
+      port: dbData.port,
+      username: dbData.username,
+      password: dbData.password,
+      database: dbData.database,
       keepConnectionAlive: true,
       ssl:
         process.env.NODE_ENV !== 'local' && process.env.NODE_ENV !== 'test'
           ? { rejectUnauthorized: false }
           : false,
+      logging: 'all',
+      logger: 'advanced-console',
     };
   }
 
