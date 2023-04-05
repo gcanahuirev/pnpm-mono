@@ -6,6 +6,7 @@
   "scripts": {
     "build": "nx run-many --target=build",
     "clear": "nx clear-cache",
+    "rm:nm": "pnpm -r exec rimraf node_modules",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
