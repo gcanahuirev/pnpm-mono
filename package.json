@@ -4,6 +4,8 @@
   "description": "",
   "private": true,
   "scripts": {
+    "build": "nx run-many --target=build",
+    "clear": "nx clear-cache",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
