@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@pnpm-mono/config';
 
 /**
  * AppService
@@ -9,7 +10,10 @@ import { Injectable } from '@nestjs/common';
  */
 @Injectable()
 export class AppService {
+  constructor(private readonly configService: ConfigService) {}
   getData(): string {
+    const config = this.configService.get();
+    console.log('config', config);
     return 'Welcome to http-gateway!';
   }
 }
