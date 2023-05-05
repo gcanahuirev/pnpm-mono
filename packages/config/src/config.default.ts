@@ -1,5 +1,19 @@
 import { ConfigData } from './config.interface';
 
+
+export const searchQueue = (env: NodeJS.ProcessEnv): string | undefined => {
+  const regexQueue = new RegExp(/^(RABBIT_MQ)_[A-Z]+_(QUEUE)$/g);
+  const queues = Object.keys(env).filter((key) => key.match(regexQueue))
+  if (queues.length > 1) {
+    throw new Error('Only one queue is allowed');
+  }
+  if (queues.length === 0) {
+    return undefined;
+  }
+  return env[queues[0]];
+};
+
+
 export const DEFAULT_CONFIG: ConfigData = {
   env: process.env.NODE_ENV! || 'development',
   port: parseInt(process.env.NODE_PORT!, 10) || 3000,
@@ -21,5 +35,9 @@ export const DEFAULT_CONFIG: ConfigData = {
     username: process.env.DATABASE_USERNAME! || 'postgres',
     password: process.env.DATABASE_PASSWORD! || 'postgres',
     database: process.env.DATABASE_NAME! || 'postgres',
+  },
+  rmq: {
+    uri: process.env.RABBIT_MQ_URI!,
+    queue: searchQueue(process.env)!,
   },
 };

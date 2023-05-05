@@ -1,4 +1,4 @@
-export interface ConfigDatabase {
+export interface DatabaseConfig {
   host: string;
   port: number;
   username: string;
@@ -19,12 +19,18 @@ export interface S3ClientConfig {
   bucket: string;
 }
 
+export interface RabbitmqConfig {
+  uri: string;
+  queue: string;
+}
+
 export interface ConfigData {
   env: string;
   port: number;
   logLevel: string;
   auth: AuthConfig;
+  db: DatabaseConfig;
   s3: S3ClientConfig;
-  db: ConfigDatabase;
+  rmq: RabbitmqConfig;
 }
 
