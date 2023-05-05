@@ -1,5 +1,5 @@
 import { DataSourceOptions } from 'typeorm';
 
-export interface DatabaseConfig {
+export interface DatasourceConfig {
   entities: DataSourceOptions['entities'];
 }

@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { DatabaseConfig } from './database.interface';
+import { DatasourceConfig } from './database.interface';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { ConfigService, ConfigModule, ConfigDatabase } from '@pnpm-mono/config';
+import { ConfigService, ConfigModule, DatabaseConfig } from '@pnpm-mono/config';
 
 @Module({})
 export class DBModule {
   private static getConnectionOptions(
     config: ConfigService,
-    dbConfig: DatabaseConfig,
+    dbConfig: DatasourceConfig,
   ): TypeOrmModuleOptions {
     const dbData = config.get().db;
     if (!dbData) {
@@ -23,7 +23,7 @@ export class DBModule {
   }
 
   private static getConnectionOptionsPostgres(
-    dbData: ConfigDatabase,
+    dbData: DatabaseConfig,
   ): TypeOrmModuleOptions {
     return {
       type: 'postgres',
@@ -42,7 +42,7 @@ export class DBModule {
     };
   }
 
-  public static forRoot(dbConfig: DatabaseConfig) {
+  public static forRoot(dbConfig: DatasourceConfig) {
     return {
       module: DBModule,
       imports: [
