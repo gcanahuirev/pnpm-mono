@@ -37,7 +37,10 @@ export const DEFAULT_CONFIG: ConfigData = {
     database: process.env.DATABASE_NAME! || 'postgres',
   },
   rmq: {
-    uri: process.env.RABBIT_MQ_URI!,
+    host: process.env.RABBIT_MQ_HOST!,
+    port: parseInt(process.env.RABBIT_MQ_PORT!, 10) || 5672,
+    username: process.env.RABBIT_MQ_USERNAME!,
+    password: process.env.RABBIT_MQ_PASSWORD!,
     queue: searchQueue(process.env)!,
   },
 };

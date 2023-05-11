@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { DEFAULT_CONFIG, searchQueue } from './config.default';
-import { AuthConfig, ConfigData, DatabaseConfig, RabbitmqConfig, S3ClientConfig } from './config.interface';
+import {
+  AuthConfig,
+  ConfigData,
+  DatabaseConfig,
+  RabbitmqConfig,
+  S3ClientConfig,
+} from './config.interface';
 
 @Injectable()
 export class ConfigService {
@@ -74,7 +80,10 @@ export class ConfigService {
     defaultConfig: Readonly<RabbitmqConfig>,
   ): RabbitmqConfig {
     return {
-      uri: env.RABBIT_MQ_URI || defaultConfig.uri,
+      host: env.RABBIT_MQ_HOST || defaultConfig.host,
+      port: parseInt(env.RABBIT_MQ_PORT!, 10) || defaultConfig.port,
+      username: env.RABBIT_MQ_USERNAME || defaultConfig.username,
+      password: env.RABBIT_MQ_PASSWORD || defaultConfig.password,
       // Rmq queue value with dynamic key
       queue: searchQueue(process.env) || defaultConfig.queue,
     };

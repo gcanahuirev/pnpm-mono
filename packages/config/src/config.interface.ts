@@ -20,7 +20,10 @@ export interface S3ClientConfig {
 }
 
 export interface RabbitmqConfig {
-  uri: string;
+  host: string;
+  port: number;
+  username: string;
+  password: string;
   queue: string;
 }
 
