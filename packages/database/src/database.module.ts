@@ -11,7 +11,7 @@ export class DBModule {
   ): TypeOrmModuleOptions {
     const dbData = config.get().db;
     if (!dbData) {
-      throw Error('');
+      throw Error('DATABASE VARIABLES NOT FOUND');
     }
     const connectionOptions = this.getConnectionOptionsPostgres(dbData);
     return {
@@ -49,7 +49,7 @@ export class DBModule {
         TypeOrmModule.forRootAsync({
           imports: [ConfigModule],
           useFactory: (configService: ConfigService) => {
-            return DBModule.getConnectionOptions(configService, dbConfig);
+            return this.getConnectionOptions(configService, dbConfig);
           },
           inject: [ConfigService],
         }),
