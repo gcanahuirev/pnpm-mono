@@ -1,71 +1,80 @@
-import { Module } from '@nestjs/common';
-import { ConfigService, ConfigModule, RabbitmqConfig } from '@pnpm-mono/config';
+import { DynamicModule, Module } from '@nestjs/common';
+import { ConfigService, RabbitmqConfig } from '@pnpm-mono/config';
 import {
-  ClientsModule,
   Transport,
+  ClientProxyFactory,
+  ClientProxy,
   RmqContext,
   RmqOptions,
 } from '@nestjs/microservices';
+import { RmqConfig } from './rabbitmq.interface';
 
 @Module({})
 export class RmqModule {
-  private static getConnectionOptions(config: ConfigService): RmqOptions {
+  private static getConnectionOptions(
+    config: ConfigService,
+    rmqConfig: RmqConfig,
+  ): ClientProxy {
     const rmqData = config.get().rmq;
     if (!rmqData) {
-      throw Error('Add rmq config to your .env file');
+      throw Error('RMQ VARIABLES NOT FOUND');
     }
-    const connectionOptions = this.getConnectionOptionsRabbitmq(rmqData);
-    return {
-      ...connectionOptions,
-    };
+    const connectionOptions = this.getConnectionOptionsAmqp(
+      rmqData,
+      rmqConfig.queue,
+    );
+    return ClientProxyFactory.create(connectionOptions);
   }
 
-  private static getConnectionOptionsRabbitmq(
-    rmqData: RabbitmqConfig,
+  private static getConnectionOptionsAmqp(
+    rmqData: Omit<RabbitmqConfig, 'queue'>,
+    queue: string,
   ): RmqOptions {
     return {
       transport: Transport.RMQ,
       options: {
-        urls: [rmqData.uri],
-        queue: rmqData.queue,
+        urls: [
+          {
+            protocol: 'amqp',
+            hostname: rmqData.host,
+            port: rmqData.port,
+            username: rmqData.username,
+            password: rmqData.password,
+          },
+        ],
         noAck: false,
-        persistent: true,
+        queue: queue,
+        queueOptions: {
+          durable: true,
+        },
       },
     };
   }
 
-  public static nameQueue(config: ConfigService) {
-    const rmqData = config.get().rmq;
-    if (!rmqData) {
-      throw Error('Add rmq config to your .env file');
-    }
-    return rmqData.queue ? rmqData.queue : 'DEFAULT';
-  }
-
-  public static ack(context: RmqContext) {
+  acknowledgeMessage(context: RmqContext) {
     const channel = context.getChannelRef();
-    const originalMessage = context.getMessage();
-    channel.ack(originalMessage);
+    const message = context.getMessage();
+    channel.ack(message);
   }
 
-  public static register(config: ConfigService) {
+  public static registerRmq(
+    service: string,
+    rmqConfig: RmqConfig,
+  ): DynamicModule {
+    const providers = [
+      {
+        provide: service,
+        useFactory: (configService: ConfigService) => {
+          return this.getConnectionOptions(configService, rmqConfig);
+        },
+        inject: [ConfigService],
+      },
+    ];
     return {
       module: RmqModule,
-      imports: [
-        ClientsModule.registerAsync([
-          {
-            imports: [ConfigModule],
-            name: RmqModule.nameQueue(config),
-            useFactory: (configService: ConfigService) => {
-              return RmqModule.getConnectionOptions(configService);
-            },
-            inject: [ConfigService],
-          },
-        ]),
-      ],
       controllers: [],
-      providers: [],
-      exports: [],
+      providers,
+      exports: providers,
     };
   }
 }
