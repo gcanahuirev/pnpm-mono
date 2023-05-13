@@ -1,15 +1,15 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { ConfigService, RabbitmqConfig } from '@pnpm-mono/config';
-import {
-  Transport,
-  ClientProxyFactory,
-  ClientProxy,
-  RmqContext,
-  RmqOptions,
-} from '@nestjs/microservices';
+import { ConfigService } from '@pnpm-mono/config';
+import { ClientProxyFactory, ClientProxy } from '@nestjs/microservices';
 import { RmqConfig } from './rabbitmq.interface';
+import { RabbitmqService } from './rabbitmq.service';
 
-@Module({})
+@Module({
+  imports: [],
+  controllers: [],
+  providers: [RabbitmqService],
+  exports: [RabbitmqService],
+})
 export class RmqModule {
   private static getConnectionOptions(
     config: ConfigService,
@@ -19,42 +19,11 @@ export class RmqModule {
     if (!rmqData) {
       throw Error('RMQ VARIABLES NOT FOUND');
     }
-    const connectionOptions = this.getConnectionOptionsAmqp(
+    const connectionOptions = RabbitmqService.getConnectionOptionsAmqp(
       rmqData,
       rmqConfig.queue,
     );
     return ClientProxyFactory.create(connectionOptions);
-  }
-
-  private static getConnectionOptionsAmqp(
-    rmqData: Omit<RabbitmqConfig, 'queue'>,
-    queue: string,
-  ): RmqOptions {
-    return {
-      transport: Transport.RMQ,
-      options: {
-        urls: [
-          {
-            protocol: 'amqp',
-            hostname: rmqData.host,
-            port: rmqData.port,
-            username: rmqData.username,
-            password: rmqData.password,
-          },
-        ],
-        noAck: false,
-        queue: queue,
-        queueOptions: {
-          durable: true,
-        },
-      },
-    };
-  }
-
-  acknowledgeMessage(context: RmqContext) {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
-    channel.ack(message);
   }
 
   public static registerRmq(
