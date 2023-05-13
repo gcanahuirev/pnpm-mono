@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { DEFAULT_CONFIG, searchQueue } from './config.default';
+import { DEFAULT_CONFIG } from './config.default';
 import {
   AuthConfig,
   ConfigData,
@@ -85,7 +85,7 @@ export class ConfigService {
       username: env.RABBIT_MQ_USERNAME || defaultConfig.username,
       password: env.RABBIT_MQ_PASSWORD || defaultConfig.password,
       // Rmq queue value with dynamic key
-      queue: searchQueue(process.env) || defaultConfig.queue,
+      // queue: searchQueue(process.env) || defaultConfig.queue,
     };
   }
 }

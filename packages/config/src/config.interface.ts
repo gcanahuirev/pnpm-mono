@@ -24,7 +24,6 @@ export interface RabbitmqConfig {
   port: number;
   username: string;
   password: string;
-  queue: string;
 }
 
 export interface ConfigData {
