@@ -13,17 +13,18 @@ export interface AuthConfig {
 }
 
 export interface S3ClientConfig {
-  accessKey: string;
-  secretAccessKey: string;
-  region: string;
-  bucket: string;
+  accessKey: string | undefined;
+  secretAccessKey: string | undefined;
+  region: string | undefined;
+  bucket: string | undefined;
 }
 
 export interface RabbitmqConfig {
-  host: string;
-  port: number;
-  username: string;
-  password: string;
+  host: string | undefined;
+  port: number | undefined;
+  username: string | undefined;
+  password: string | undefined;
+  [key: string]: string | number | undefined;
 }
 
 export interface ConfigData {
