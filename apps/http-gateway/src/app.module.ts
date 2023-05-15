@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@pnpm-mono/config';
+import { ConfigModule, ConfigService } from '@pnpm-mono/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,4 +9,9 @@ import { AppService } from './app.service';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  static port: number;
+  constructor(private readonly configService: ConfigService) {
+    AppModule.port = this.configService.get().port;
+  }
+}

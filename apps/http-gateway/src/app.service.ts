@@ -13,7 +13,6 @@ export class AppService {
   constructor(private readonly configService: ConfigService) {}
   getData(): string {
     const config = this.configService.get();
-    console.log('config', config);
-    return 'Welcome to http-gateway!';
+    return JSON.stringify(config.env || 'Welcome to http-gateway!');
   }
 }

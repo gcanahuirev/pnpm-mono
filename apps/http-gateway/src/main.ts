@@ -1,29 +1,51 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 
 import { AppModule } from './app.module';
 import { initSwagger } from './app.swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3333;
+  const logger = new Logger('Gateway');
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter({
+      logger: {
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            levelFirst: true,
+            translateTime: 'SYS:dd-mm-yyyy h:MM:ss TT Z',
+            ignore: 'pid,hostname',
+            colorize: true,
+          },
+        },
+        level: 'info',
+      },
+      trustProxy: true,
+      bodyLimit: 204857600,
+    }),
+  );
+
+  app.enableShutdownHooks();
+  app.enableCors();
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      forbidUnknownValues: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+
   /* ======= INIT DOC SWAGGER ======= */
   initSwagger(app);
-  await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
-  );
-  Logger.debug(
-    `Swagger document generated ${await app.getUrl()}/api/v2/swagger`,
-    'SWAGGER',
-  );
+
+  await app.listen(AppModule.port);
+  logger.log(`🚀 Gateway running on: ${await app.getUrl()}`);
+  logger.debug(`📜 Swagger generated on ${await app.getUrl()}/api/swagger`);
 }
 
 void bootstrap();

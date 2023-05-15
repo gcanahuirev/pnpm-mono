@@ -13,7 +13,7 @@ export const initSwagger = (app: INestApplication) => {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('/api/v2/swagger', app, document, {
+  SwaggerModule.setup('/api/swagger', app, document, {
     swaggerOptions: {
       deepLinking: true,
       displayOperationId: true,
