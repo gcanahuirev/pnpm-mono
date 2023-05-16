@@ -20,11 +20,10 @@ export interface S3ClientConfig {
 }
 
 export interface RabbitmqConfig {
-  host: string | undefined;
-  port: number | undefined;
-  username: string | undefined;
-  password: string | undefined;
-  [key: string]: string | number | undefined;
+  host: string;
+  port: number;
+  username: string;
+  password: string;
 }
 
 export interface ConfigData {

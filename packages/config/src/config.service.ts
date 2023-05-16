@@ -72,14 +72,11 @@ export class ConfigService {
   private parseRabbitMQConfig(
     defaultConfig: Readonly<RabbitmqConfig>,
   ): RabbitmqConfig {
-    const { host, port, username, password, ...queues } = defaultConfig;
     return {
       host: defaultConfig.host,
       port: defaultConfig.port,
       username: defaultConfig.username,
       password: defaultConfig.password,
-      // Rmq queue value with dynamic key
-      ...queues,
     };
   }
 }

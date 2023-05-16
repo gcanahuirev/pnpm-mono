@@ -1,24 +1,6 @@
 import { env } from 'process';
 import { ConfigData } from './config.interface';
 
-export const searchQueue = (
-  env: NodeJS.ProcessEnv,
-): {
-  [key: string]: string | undefined;
-} => {
-  const regexQueue = new RegExp(/^(RABBIT_MQ)_[A-Z]+_(QUEUE)$/g);
-  const queues = Object.keys(env).filter((key) => key.match(regexQueue));
-  if (new Set(queues).size !== queues.length) {
-    throw new Error('QUEUES DUPLICATED');
-  }
-  const envQueue: { [key: string]: string | undefined } = {};
-  queues.forEach((envKey) => {
-    const keyQueue = envKey.split('_')[2].toLocaleLowerCase();
-    envQueue[keyQueue] = env[envKey];
-  });
-  return envQueue;
-};
-
 export const DEFAULT_CONFIG: ConfigData = {
   env: env.NODE_ENV ?? 'development',
   port: parseInt(env.NODE_PORT ?? '3000', 10),
@@ -44,8 +26,7 @@ export const DEFAULT_CONFIG: ConfigData = {
   rmq: {
     host: env.RABBIT_MQ_HOST ?? 'localhost',
     port: parseInt(env.RABBIT_MQ_PORT ?? '5672', 10),
-    username: env.RABBIT_MQ_USERNAME,
-    password: env.RABBIT_MQ_PASSWORD,
-    ...searchQueue(env),
+    username: env.RABBIT_MQ_USERNAME ?? 'guest',
+    password: env.RABBIT_MQ_PASSWORD ?? 'guest',
   },
 };
