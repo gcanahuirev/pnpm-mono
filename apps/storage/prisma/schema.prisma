@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Space {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  module    String?  @db.VarChar(128)
+  status    Boolean  @default(true)
+  parent    Int?
+  path      String   @db.VarChar(255)
+  userId    Int      @map("user_id")
+  projectId Int      @map("project_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  files     File[]
+
+  @@map("space")
+}
+
+model File {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  mimeType  String   @map("mime_type") @db.VarChar(255)
+  size      Int
+  path      String   @db.VarChar(255)
+  tag       Int?
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  space     Space    @relation(fields: [spaceId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  spaceId   Int      @map("space_id")
+
+  @@map("file")
+}
