@@ -1,49 +1,76 @@
-import { DynamicModule, Module } from '@nestjs/common';
-import { ConfigService } from '@pnpm-mono/config';
-import { ClientProxyFactory, ClientProxy } from '@nestjs/microservices';
-import { RmqConfig } from './rabbitmq.interface';
+import { DynamicModule, Module, Provider } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@pnpm-mono/config';
+import {
+  ClientProxy,
+  ClientProxyFactory,
+  ClientsModule,
+} from '@nestjs/microservices';
 import { RabbitmqService } from './rabbitmq.service';
 
 @Module({
-  imports: [],
-  controllers: [],
+  imports: [ConfigModule],
   providers: [RabbitmqService],
   exports: [RabbitmqService],
 })
-export class RmqModule {
-  private static getConnectionOptions(
-    config: ConfigService,
-    rmqConfig: RmqConfig,
-  ): ClientProxy {
-    const rmqData = config.get().rmq;
-    if (!rmqData) {
-      throw Error('RMQ VARIABLES NOT FOUND');
-    }
-    const connectionOptions = RabbitmqService.getConnectionOptionsAmqp(
-      rmqData,
-      rmqConfig.queue,
-    );
-    return ClientProxyFactory.create(connectionOptions);
-  }
 
-  public static registerRmq(
+/* Clientes de microservicios de RabbitMQ */
+export class RmqModule {
+  /* Clase para crear de forma programática */
+  public static registerRmqProxy(
     service: string,
-    rmqConfig: RmqConfig,
+    queue: string,
   ): DynamicModule {
-    const providers = [
+    if (!queue) {
+      throw Error('QUEUE NAME NOT FOUND');
+    }
+    if (!service) {
+      throw Error('SERVICE NAME NOT FOUND');
+    }
+    const providers: Provider[] = [
       {
         provide: service,
-        useFactory: (configService: ConfigService) => {
-          return this.getConnectionOptions(configService, rmqConfig);
+        useFactory: (
+          rabbitService: RabbitmqService,
+          config: ConfigService,
+        ): ClientProxy => {
+          const opts = rabbitService.getRabbitmqOptions(config, queue);
+          return ClientProxyFactory.create(opts);
         },
-        inject: [ConfigService],
+        inject: [RabbitmqService, ConfigService],
       },
     ];
     return {
       module: RmqModule,
-      controllers: [],
       providers,
       exports: providers,
+    };
+  }
+
+  /* Módulo de configuración completo */
+  public registerRmq(service: string, queue: string): DynamicModule {
+    if (!queue) {
+      throw Error('QUEUE NAME NOT FOUND');
+    }
+    if (!service) {
+      throw Error('SERVICE NAME NOT FOUND');
+    }
+    return {
+      module: RmqModule,
+      imports: [
+        ClientsModule.registerAsync([
+          {
+            name: service,
+            useFactory: (
+              rabbitService: RabbitmqService,
+              config: ConfigService,
+            ) => {
+              return rabbitService.getRabbitmqOptions(config, queue);
+            },
+            inject: [RabbitmqService, ConfigService],
+          },
+        ]),
+      ],
+      exports: [ClientsModule],
     };
   }
 }

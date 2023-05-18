@@ -1,30 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { RmqContext, RmqOptions, Transport } from '@nestjs/microservices';
-import { RabbitmqConfig } from '@pnpm-mono/config';
+import { ConfigService } from '@pnpm-mono/config';
 
 @Injectable()
 export class RabbitmqService {
-  public static getConnectionOptionsAmqp(
-    rmqData: RabbitmqConfig,
-    queue: string,
-  ): RmqOptions {
-    if (!rmqData) {
+  public getRabbitmqOptions(config: ConfigService, queue?: string): RmqOptions {
+    if (!config.get().rmq) {
       throw Error('RMQ VARIABLES NOT FOUND');
     }
+    const HOST = config.get().rmq.host;
+    const PORT = config.get().rmq.port;
+    const USERNAME = config.get().rmq.username;
+    const PASSWORD = config.get().rmq.password;
     return {
       transport: Transport.RMQ,
       options: {
-        urls: [
-          {
-            protocol: 'amqp',
-            hostname: rmqData.host,
-            port: rmqData.port,
-            username: rmqData.username,
-            password: rmqData.password,
-          },
-        ],
+        urls: [`amqp://${USERNAME}:${PASSWORD}@${HOST}:${PORT}`],
+        queue,
         noAck: false,
-        queue: queue,
         queueOptions: {
           durable: true,
         },
@@ -32,7 +25,7 @@ export class RabbitmqService {
     };
   }
 
-  public static acknowledgeMessage(context: RmqContext): void {
+  public acknowledgeMessage(context: RmqContext): void {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     channel.ack(message);
