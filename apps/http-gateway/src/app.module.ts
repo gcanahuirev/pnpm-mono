@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@pnpm-mono/config';
 
 import { AppController } from './app.controller';
+// import { AppLoggerModule } from '@pnpm-mono/logger';
 import { AppService } from './app.service';
 
 @Module({
