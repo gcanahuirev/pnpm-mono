@@ -1,7 +1,7 @@
 import { env } from 'process';
 import { ConfigData } from './config.interface';
 
-export const DEFAULT_CONFIG: ConfigData = {
+export const DEFAULT_CONFIG = (): ConfigData => ({
   env: env.NODE_ENV ?? 'development',
   port: parseInt(env.NODE_PORT ?? '3000', 10),
   logLevel: env.NODE_LOG_LEVEL ?? 'debug',
@@ -29,4 +29,4 @@ export const DEFAULT_CONFIG: ConfigData = {
     username: env.RABBIT_MQ_USERNAME ?? 'guest',
     password: env.RABBIT_MQ_PASSWORD ?? 'guest',
   },
-};
+});

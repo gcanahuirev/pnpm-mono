@@ -12,11 +12,11 @@ import {
 @Injectable()
 export class ConfigService {
   private config: ConfigData;
-  constructor(data: ConfigData = DEFAULT_CONFIG) {
+  constructor(data: ConfigData = DEFAULT_CONFIG()) {
     this.config = data;
   }
 
-  public get(): Readonly<ConfigData> {
+  public get(): ConfigData {
     return this.config;
   }
 
@@ -26,13 +26,13 @@ export class ConfigService {
 
   private parseConfigFromEnv(): ConfigData {
     return {
-      env: DEFAULT_CONFIG.env,
-      port: DEFAULT_CONFIG.port,
-      logLevel: DEFAULT_CONFIG.logLevel,
-      auth: this.parseAuthenticationConfig(DEFAULT_CONFIG.auth),
-      db: this.parseDatabaseConfig(DEFAULT_CONFIG.db),
-      s3: this.parseS3ClientConfig(DEFAULT_CONFIG.s3),
-      rmq: this.parseRabbitMQConfig(DEFAULT_CONFIG.rmq),
+      env: DEFAULT_CONFIG().env,
+      port: DEFAULT_CONFIG().port,
+      logLevel: DEFAULT_CONFIG().logLevel,
+      auth: this.parseAuthenticationConfig(DEFAULT_CONFIG().auth),
+      db: this.parseDatabaseConfig(DEFAULT_CONFIG().db),
+      s3: this.parseS3ClientConfig(DEFAULT_CONFIG().s3),
+      rmq: this.parseRabbitMQConfig(DEFAULT_CONFIG().rmq),
     };
   }
 
