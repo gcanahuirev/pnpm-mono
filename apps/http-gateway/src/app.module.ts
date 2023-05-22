@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@pnpm-mono/config';
+import { LoggerModule } from '@pnpm-mono/logger';
 
 import { AppController } from './app.controller';
-// import { AppLoggerModule } from '@pnpm-mono/logger';
 import { AppService } from './app.service';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule, LoggerModule],
   controllers: [AppController],
   providers: [AppService],
 })

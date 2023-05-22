@@ -1,37 +1,18 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { Logger, LoggerErrorInterceptor } from '@pnpm-mono/logger';
 
 import { AppModule } from './app.module';
 import { initSwagger } from './app.swagger';
 
 async function bootstrap() {
-  const logger = new Logger('Gateway');
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter({
-      logger: {
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            levelFirst: true,
-            translateTime: 'SYS:dd-mm-yyyy h:MM:ss TT Z',
-            ignore: 'pid,hostname',
-            colorize: true,
-          },
-        },
-        level: 'info',
-      },
-      trustProxy: true,
-      bodyLimit: 204857600,
-    }),
-  );
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
+  const logger = app.get(Logger);
+  app.useLogger(logger);
   app.enableShutdownHooks();
   app.enableCors();
+  app.useGlobalInterceptors(new LoggerErrorInterceptor());
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

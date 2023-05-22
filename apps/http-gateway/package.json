@@ -25,13 +25,11 @@
     "@fastify/static": "^6.10.1",
     "@nestjs/common": "^9.4.0",
     "@nestjs/core": "^9.4.0",
-    "@nestjs/platform-fastify": "^9.4.0",
     "@nestjs/swagger": "^6.3.0",
     "@pnpm-mono/config": "workspace:^",
     "@pnpm-mono/logger": "workspace:^",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
-    "fastify": "^4.17.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
