@@ -11,8 +11,8 @@ export const DEFAULT_CONFIG = (): ConfigData => ({
     refreshTokenSecret: env.JWT_REFRESH_TOKEN ?? 'sm_refresh_token',
   },
   s3: {
-    accessKey: env.S3_ACCESS_KEY,
-    secretAccessKey: env.S3_SECRET_ACCESS_KEY,
+    accessKey: env.S3_ACCESS_KEY ?? '',
+    secretAccessKey: env.S3_SECRET_ACCESS_KEY ?? '',
     region: env.S3_REGION,
     bucket: env.S3_BUCKET,
   },

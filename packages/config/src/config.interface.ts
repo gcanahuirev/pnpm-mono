@@ -13,8 +13,8 @@ export interface AuthConfig {
 }
 
 export interface S3ClientConfig {
-  accessKey: string | undefined;
-  secretAccessKey: string | undefined;
+  accessKey: string;
+  secretAccessKey: string;
   region: string | undefined;
   bucket: string | undefined;
 }

@@ -24,8 +24,8 @@ export class S3Service {
   private readonly s3 = new S3Client({
     region: this.configService.get().s3.region,
     credentials: {
-      accessKeyId: this.configService.get().s3.accessKey,
-      secretAccessKey: this.configService.get().s3.secretAccessKey,
+      accessKeyId: this.configService.get().s3.accessKey ?? '',
+      secretAccessKey: this.configService.get().s3.secretAccessKey ?? '',
     },
   });
 
