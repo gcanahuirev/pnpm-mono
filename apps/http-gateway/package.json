@@ -26,6 +26,7 @@
     "@nestjs/common": "^9.4.0",
     "@nestjs/core": "^9.4.0",
     "@nestjs/swagger": "^6.3.0",
+    "@pnpm-mono/common": "workspace:^",
     "@pnpm-mono/config": "workspace:^",
     "@pnpm-mono/logger": "workspace:^",
     "class-transformer": "^0.5.1",
