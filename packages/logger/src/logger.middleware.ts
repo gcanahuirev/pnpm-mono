@@ -1,23 +1,15 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { Request, Response, NextFunction } from 'express';
 import { randomUUID } from 'crypto';
-import { Logger } from './logger.service';
+
+export const CORRELATION_ID = 'X-Correlation-Id';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  private logger: Logger;
-  constructor() {
-    this.logger = Logger.getInstance();
-  }
-
-  use(req: FastifyRequest, res: FastifyReply, next: () => void): any {
+  use(req: Request, res: Response, next: NextFunction): any {
     const correlationId = randomUUID();
-    req.headers['X-Correlation-ID'] = correlationId;
-    res.getHeader('X-Correlation-ID');
-    this.logger.log(
-      `Request: ${req.headers['X-Correlation-ID']}`,
-      correlationId,
-    );
+    req.headers[CORRELATION_ID] = correlationId;
+    res.set(CORRELATION_ID, correlationId);
     next();
   }
 }
